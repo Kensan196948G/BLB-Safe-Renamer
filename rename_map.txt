@@ -1,0 +1,8 @@
+rem BLB Safe Renamer - rename map
+rem 1行につき1件、以下の形式で記載してください。
+rem ren "元ファイル名" "変換後ファイル名"
+rem
+rem 例:
+rem ren "f340.blb" "Honbun2.txt"
+rem ren "f341.blb" "Honbun3.txt"
+rem ren "f30715.blb" "f30715.pdf"
