@@ -1,6 +1,5 @@
 # Execution artifacts
 logs/
-output/
 
 # User files to rename (keep the folder, not its contents)
 input/*
@@ -10,7 +9,10 @@ input/*
 state.json
 .claude/
 reports/
-scripts/
+
+# claude-mem plugin auto-generated context files (root CLAUDE.md stays tracked)
+output/CLAUDE.md
+scripts/**/CLAUDE.md
 
 # OS noise
 Thumbs.db
