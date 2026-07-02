@@ -1,0 +1,11 @@
+# Execution artifacts
+logs/
+output/
+
+# Session / local orchestration state (not part of the product)
+state.json
+.claude/
+
+# OS noise
+Thumbs.db
+Desktop.ini
