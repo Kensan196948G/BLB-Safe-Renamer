@@ -12,10 +12,14 @@
     Compatible with Windows PowerShell 5.x. No external libraries.
 
 .PARAMETER ListPath
-    Path to the rename map file. Default: <BaseDir>\rename_map.txt
+    Path to the rename map file. Default: <script folder>\rename_map.txt
 
 .PARAMETER BaseDir
-    Target folder containing the files to rename. Default: script folder.
+    Target folder containing the files to rename.
+    Default: <script folder>\input (created automatically when missing).
+
+.PARAMETER LogDir
+    Folder for CSV logs. Default: <BaseDir>\logs.
 
 .PARAMETER Execute
     When specified, actually renames files (EXECUTE mode).
@@ -25,6 +29,7 @@
 param(
     [string]$ListPath,
     [string]$BaseDir,
+    [string]$LogDir,
     [switch]$Execute
 )
 
@@ -38,9 +43,18 @@ $ErrorActionPreference = 'Stop'
 # (e.g. D:\Folder"). '"' is never valid in a path, so trim it.
 if ($BaseDir)  { $BaseDir  = $BaseDir.TrimEnd('"')  }
 if ($ListPath) { $ListPath = $ListPath.TrimEnd('"') }
+if ($LogDir)   { $LogDir   = $LogDir.TrimEnd('"')   }
 
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+# Target files live in the "input" folder next to this script by default.
 if ([string]::IsNullOrWhiteSpace($BaseDir)) {
-    $BaseDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+    $BaseDir = Join-Path $scriptDir 'input'
+}
+if (-not (Test-Path -LiteralPath $BaseDir)) {
+    New-Item -ItemType Directory -Path $BaseDir | Out-Null
+    Write-Host ("INFO: created target folder: {0}" -f $BaseDir)
+    Write-Host "INFO: place the files to rename into this folder and run again."
 }
 try {
     $BaseDir = (Resolve-Path -LiteralPath $BaseDir).ProviderPath
@@ -50,7 +64,7 @@ try {
 }
 
 if ([string]::IsNullOrWhiteSpace($ListPath)) {
-    $ListPath = Join-Path $BaseDir 'rename_map.txt'
+    $ListPath = Join-Path $scriptDir 'rename_map.txt'
 }
 
 $mode = 'DRYRUN'
@@ -59,7 +73,10 @@ if ($Execute) { $mode = 'EXECUTE' }
 # ---------------------------------------------------------------
 # Prepare logs folder and log path
 # ---------------------------------------------------------------
-$logDir = Join-Path $BaseDir 'logs'
+$logDir = $LogDir
+if ([string]::IsNullOrWhiteSpace($logDir)) {
+    $logDir = Join-Path $BaseDir 'logs'
+}
 if (-not (Test-Path -LiteralPath $logDir)) {
     New-Item -ItemType Directory -Path $logDir | Out-Null
 }

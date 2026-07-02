@@ -2,6 +2,10 @@
 logs/
 output/
 
+# User files to rename (keep the folder, not its contents)
+input/*
+!input/.gitkeep
+
 # Session / local orchestration state (not part of the product)
 state.json
 .claude/
